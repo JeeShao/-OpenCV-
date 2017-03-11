@@ -1,3 +1,7 @@
+#coding=utf-8
+#静态图片的人脸检测
+#2017.03.11
+#Jee
 import cv2
 filename = '2.jpg'
 
@@ -7,6 +11,7 @@ def detect(filename):
     # print img
     # exit()
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
     faces = face_cascade.detectMultiScale(gray,1.1,5)
     for(x,y,w,h) in faces:
         img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
