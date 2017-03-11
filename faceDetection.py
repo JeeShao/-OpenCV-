@@ -9,7 +9,7 @@ def detect(filename):
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray,1.1,5)
     for(x,y,w,h) in faces:
-        img = cv2.rectangle(img,(x,y),(x+w,y+w),(255,0,0),2)
+        img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
     cv2.namedWindow('MyFace',0)
     cv2.imshow('MyFace',img)
     cv2.imwrite('./MyFace1.jpg',img)
