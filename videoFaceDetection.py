@@ -8,7 +8,7 @@ import sys
 import os
 
 def detect():
-    face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_alt.xml')
     eye_cascade = cv2.CascadeClassifier('./cascades/haarcascade_eye.xml')
     camera = cv2.VideoCapture(0)
     count=1
@@ -75,7 +75,7 @@ def face_rec():
     y = np.asarray(y,dtype=np.int32)
     if(len(sysargv) == 3):
         out_dir = sysargv[2]
-    model = cv2.face.createEigenFaceRecognizer()
+    model = cv2.face.createLBPHFaceRecognizer()
     model.train(np.asarray(X),np.asarray(y))
     camera = cv2.VideoCapture(0)
     face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_default.xml')
@@ -103,6 +103,6 @@ def face_rec():
             break
     camera.release()
     cv2.destroyAllWindows()
-flag = 1 #0:训练 1::识别
+flag = 1 #0:训练 1:识别
 if __name__ == "__main__":
     face_rec() if flag else detect()
