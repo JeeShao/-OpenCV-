@@ -6,8 +6,9 @@ import numpy as np
 import cv2
 import sys
 import os
+from doCsv import doCsv
 
-def detect():
+def detect(path):
     face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_alt.xml')
     eye_cascade = cv2.CascadeClassifier('./cascades/haarcascade_eye.xml')
     camera = cv2.VideoCapture(0)
@@ -20,7 +21,7 @@ def detect():
             img = cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             f = cv2.resize(gray[y:y+h,x:x+w],(92,112))
             if(cv2.waitKey(1000//12) & 0xff == ord("m")):
-                cv2.imwrite('./data/s41/%s.pgm'% str(count),f)
+                cv2.imwrite('./data/s42/%s.pgm'% str(count),f)
                 count+=1
             # roi_gray = gray[y:y+h,x:x+w]
             # roi_color = img[y:y+h,x:x+w]
@@ -35,11 +36,13 @@ def detect():
             break
     camera.release()
     cv2.destroyAllWindows()
+    imagestoCsv(path)
 
 # 加载数据并识别人脸
-def read_images(path, sz=None):
+def imagestoCsv(path, sz=None):
+    docsv = doCsv("csv_test.csv")
+    data = []
     c=1
-    X,y = [],[]
     for dirname,dirnames,filenames in os.walk(path):
         for subdirname in dirnames:
             # print(c,subdirname)
@@ -49,12 +52,13 @@ def read_images(path, sz=None):
                     if(filename == ".directory"):
                         continue
                     filepath = os.path.join(subject_path,filename)
-                    im = cv2.imread(filepath,cv2.IMREAD_GRAYSCALE)
+                    # im = cv2.imread(filepath,cv2.IMREAD_GRAYSCALE)
+                    data = data + [(filepath,str(c))]
                     # 调整尺寸
-                    if(sz is not None):
-                        im = cv2.resize(im,(92,112))
-                    X.append(np.asarray(im,dtype=np.uint8))
-                    y.append(c)
+                    # if(sz is not None):
+                    #     im = cv2.resize(im,(92,112))
+                    # X.append(np.asarray(im,dtype=np.uint8))
+                    # y.append(c)
                 except IOError as xxx_todo_changeme:
                     (errno,strerror) = xxx_todo_changeme.args
                     print("I/O error({0}):{1}".format(errno,strerror))
@@ -62,6 +66,21 @@ def read_images(path, sz=None):
                     print("Unexpected error:",sys.exc_info()[0])
                     raise
             c = c+1
+    docsv.csv_writer(data)
+
+def readImages(sz=None):
+    X, y = [], []
+    docsv = doCsv("csv_test.csv")
+    img_list = docsv.csv_reader()
+    for i in range(1,len(img_list),2):
+        filepath = img_list[i]
+        im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+        c = img_list[i+1]
+        # 调整尺寸
+        if (sz is not None):
+            im = cv2.resize(im, (92, 112))
+        X.append(np.asarray(im, dtype=np.uint8))
+        y.append(c)
     return [X,y]
 
 # 基于Eigenfaces算法测试人脸识别脚本
@@ -71,7 +90,7 @@ def face_rec():
     if len(sysargv)<2:
         print("USAGE:facerec_demo.py </path/to/image> [</path/to/store/image/at>]")
         sys.exit()
-    [X,y] = read_images(sysargv[1])
+    [X,y] = readImages()
     y = np.asarray(y,dtype=np.int32)
     if(len(sysargv) == 3):
         out_dir = sysargv[2]
@@ -105,4 +124,5 @@ def face_rec():
     cv2.destroyAllWindows()
 flag = 1 #0:训练 1:识别
 if __name__ == "__main__":
-    face_rec() if flag else detect()
+    path = "./data"
+    face_rec() if flag else detect(path)
