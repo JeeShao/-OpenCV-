@@ -72,16 +72,19 @@ def readImages(sz=None):
     X, y = [], []
     docsv = doCsv("csv_test.csv")
     img_list = docsv.csv_reader()
-    for i in range(1,len(img_list),2):
-        filepath = img_list[i]
-        im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-        c = img_list[i+1]
-        # 调整尺寸
-        if (sz is not None):
-            im = cv2.resize(im, (92, 112))
-        X.append(np.asarray(im, dtype=np.uint8))
-        y.append(c)
-    return [X,y]
+    if img_list:
+        for i in range(1,len(img_list),2):
+            filepath = img_list[i]
+            im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+            c = img_list[i+1]
+            # 调整尺寸
+            if (sz is not None):
+                im = cv2.resize(im, (92, 112))
+            X.append(np.asarray(im, dtype=np.uint8))
+            y.append(c)
+        return [X,y]
+    else:
+        return False
 
 # 基于Eigenfaces算法测试人脸识别脚本
 def face_rec():
@@ -90,7 +93,10 @@ def face_rec():
     if len(sysargv)<2:
         print("USAGE:facerec_demo.py </path/to/image> [</path/to/store/image/at>]")
         sys.exit()
-    [X,y] = readImages()
+    try:
+        [X,y] = readImages()
+    except:
+        print("read images error")
     y = np.asarray(y,dtype=np.int32)
     if(len(sysargv) == 3):
         out_dir = sysargv[2]
