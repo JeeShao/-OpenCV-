@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 import csv
-# import datetime
 import time
-# import codecs
+
 class doCsv:
-    def __init__(self,file= "csv_test.csv"):
+    def __init__(self,file= "trainFace.csv"):
         self.file=file
-        # self.data=''
 
     def csv_writer(self,data):
         try:

@@ -32,8 +32,9 @@ def read_images(path, sz=None):
         c = c+1
     print(X)
 
-if __name__ == "__main__":
-     read_images(path)
+# Form implementation generated from reading ui file 'demo2.py'
+#
+# Created by: PyQt5 UI code generator 5.6
+#
+# WARNING! All changes made in this file will be lost!
 
-# model = cv2.face
-# help (model)

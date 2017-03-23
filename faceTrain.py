@@ -4,17 +4,23 @@
 #@Author: Jee
 import numpy as np
 import cv2
-from videoFaceDetection import imagestoCsv
 import os
+import sys
+from doCsv import doCsv
 
-def detect(path):
-    face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_alt2.xml')
+def detect(path,dir=''):
+    face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_alt.xml')
     eye_cascade = cv2.CascadeClassifier('./cascades/haarcascade_eye.xml')
     mouth_cascade = cv2.CascadeClassifier('./cascades/haarcascade_mouth.xml')
     nose_cascade = cv2.CascadeClassifier('./cascades/haarcascade_nose.xml')
     camera = cv2.VideoCapture(0)
     count=1
-    dir = 's42'
+    if(dir==''):
+        # 增加新人脸时新建目录
+        dirnames=os.listdir(path)
+        dirnames.sort(key=lambda x:int(x.split('s')[1]),reverse=True)
+        dir_no=int(dirnames[0].split('s')[1])+1
+        dir = "s"+str(dir_no)
     if(os.path.exists('./data/%s'% dir)==False): #目录不存在则创建
         os.mkdir('./data/%s'% dir)
     while(True):
@@ -40,12 +46,44 @@ def detect(path):
             for (ex, ey, ew, eh) in nose:
                 cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(100,100,0),2)
         cv2.imshow("camera",frame)
-        if k & 0xff == ord("q") or count==41:
+        if k & 0xff == ord("q") or count==51:#拍照60张或按下q键 则退出
             break
     camera.release()
     cv2.destroyAllWindows()
-    imagestoCsv(path)
 
+def imagestoCsv(path,sz=None):
+    data = []
+    c=0
+    sort_flag=0
+    for dirname,dirnames,filenames in os.walk(path):
+        if sort_flag==0:
+            dirnames.sort(key=lambda x: int(x.split('s')[1]))
+            sort_flag=1      #标志排过序 以免重复排序
+        for subdirname in dirnames:
+            subject_path = os.path.join(dirname,subdirname)
+            for filename in os.listdir(subject_path):
+                try:
+                    if(filename == ".directory"):
+                        continue
+                    filepath = os.path.join(subject_path,filename)
+                    # im = cv2.imread(filepath,cv2.IMREAD_GRAYSCALE)
+                    data = data + [(filepath,str(c))]
+                    # 调整尺寸
+                    # if(sz is not None):
+                    #     im = cv2.resize(im,(92,112))
+                    # X.append(np.asarray(im,dtype=np.uint8))
+                    # y.append(c)
+                except IOError as xxx_todo_changeme:
+                    (errno,strerror) = xxx_todo_changeme.args
+                    print("I/O error({0}):{1}".format(errno,strerror))
+                except:
+                    print("Unexpected error:",sys.exc_info()[0])
+                    raise
+            c = c+1
+    docsv.csv_writer(data)
 if __name__ == "__main__":
     path = "./data"
-    detect(path)
+    dir = ''  #保存训练人脸图的目录，为空表示新建
+    docsv = doCsv("trainFace.csv")
+    detect(path,dir)
+    imagestoCsv(path)
