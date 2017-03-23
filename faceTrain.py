@@ -11,8 +11,8 @@ from doCsv import doCsv
 def detect(path,dir=''):
     face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_alt.xml')
     eye_cascade = cv2.CascadeClassifier('./cascades/haarcascade_eye.xml')
-    mouth_cascade = cv2.CascadeClassifier('./cascades/haarcascade_mouth.xml')
-    nose_cascade = cv2.CascadeClassifier('./cascades/haarcascade_nose.xml')
+    mouth_cascade = cv2.CascadeClassifier('./cascades/haarcascade_mcs_mouth.xml')
+    nose_cascade = cv2.CascadeClassifier('./cascades/haarcascade_mcs_nose.xml')
     camera = cv2.VideoCapture(0)
     count=1
     if(dir==''):
@@ -25,18 +25,19 @@ def detect(path,dir=''):
         os.mkdir('./data/%s'% dir)
     while(True):
         ret, frame = camera.read()
-        gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)#灰度
+        gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)#灰度图像
         faces = face_cascade.detectMultiScale(gray,1.3,5)
         k = cv2.waitKey(1000 // 12)
         for (x, y, w, h) in faces:
             img = cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             f = cv2.resize(gray[y:y+h,x:x+w],(92,112))#格式化大小
             if(k & 0xff == ord("m")):  #拍照保存
+                f = cv2.equalizeHist(f)  # 均衡直方图
                 cv2.imwrite('./data/%s/%s.pgm'% (dir,str(count)),f)
                 print("拍照:%d"%(count))
                 count+=1
             roi_color = img[y:y+h,x:x+w]
-            eyes = eye_cascade.detectMultiScale(roi_color,1.3,8,0,(40,40))
+            eyes = eye_cascade.detectMultiScale(roi_color,1.3,5,0,(40,40))
             for(ex,ey,ew,eh) in eyes:
                 cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
             mouth = mouth_cascade.detectMultiScale(roi_color,1.3,40,0,(40,40))
@@ -83,7 +84,7 @@ def imagestoCsv(path,sz=None):
     docsv.csv_writer(data)
 if __name__ == "__main__":
     path = "./data"
-    dir = ''  #保存训练人脸图的目录，为空表示新建
+    dir = 's0'  #保存训练人脸图的目录，为空表示新建
     docsv = doCsv("trainFace.csv")
     detect(path,dir)
     imagestoCsv(path)
