@@ -8,8 +8,10 @@ from videoFaceDetection import imagestoCsv
 import os
 
 def detect(path):
-    face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_alt.xml')
+    face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_alt2.xml')
     eye_cascade = cv2.CascadeClassifier('./cascades/haarcascade_eye.xml')
+    mouth_cascade = cv2.CascadeClassifier('./cascades/haarcascade_mouth.xml')
+    nose_cascade = cv2.CascadeClassifier('./cascades/haarcascade_nose.xml')
     camera = cv2.VideoCapture(0)
     count=1
     dir = 's42'
@@ -28,9 +30,15 @@ def detect(path):
                 print("拍照:%d"%(count))
                 count+=1
             roi_color = img[y:y+h,x:x+w]
-            eyes = eye_cascade.detectMultiScale(roi_color,1.03,5,0,(40,40))
+            eyes = eye_cascade.detectMultiScale(roi_color,1.3,8,0,(40,40))
             for(ex,ey,ew,eh) in eyes:
                 cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+            mouth = mouth_cascade.detectMultiScale(roi_color,1.3,40,0,(40,40))
+            for (ex, ey, ew, eh) in mouth:
+                cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,100,0),2)
+            nose = nose_cascade.detectMultiScale(roi_color,1.3,20,0,(30,30))
+            for (ex, ey, ew, eh) in nose:
+                cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(100,100,0),2)
         cv2.imshow("camera",frame)
         if k & 0xff == ord("q") or count==41:
             break
