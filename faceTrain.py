@@ -47,28 +47,30 @@ def detect(path,dir=''):
             for (ex, ey, ew, eh) in nose:
                 cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(100,100,0),2)
         cv2.imshow("camera",frame)
-        if k & 0xff == ord("q") or count==51:#拍照60张或按下q键 则退出
+        if k & 0xff == ord("q") or count==101:#拍照60张或按下q键 则退出
             break
     camera.release()
     cv2.destroyAllWindows()
 
 def imagestoCsv(path,sz=None):
     data = []
-    c=0
+    label=1
     sort_flag=0
     for dirname,dirnames,filenames in os.walk(path):
         if sort_flag==0:
             dirnames.sort(key=lambda x: int(x.split('s')[1]))
             sort_flag=1      #标志排过序 以免重复排序
         for subdirname in dirnames:
-            subject_path = os.path.join(dirname,subdirname)
+            # subject_path = "%s/%s" % (dirname, subdirname)
+            subject_path = os.path.join(dirname,subdirname).replace('\\', '/')
             for filename in os.listdir(subject_path):
                 try:
                     if(filename == ".directory"):
                         continue
-                    filepath = os.path.join(subject_path,filename)
+                    filepath = os.path.join(subject_path,filename).replace('\\', '/')
                     # im = cv2.imread(filepath,cv2.IMREAD_GRAYSCALE)
-                    data = data + [(filepath,str(c))]
+                    # data1 = data1 + [(filepath,str(label))]
+                    data = data + [tuple(["%s;%d" % (filepath,label)])]
                     # 调整尺寸
                     # if(sz is not None):
                     #     im = cv2.resize(im,(92,112))
@@ -80,11 +82,11 @@ def imagestoCsv(path,sz=None):
                 except:
                     print("Unexpected error:",sys.exc_info()[0])
                     raise
-            c = c+1
+            label = label+1
     docsv.csv_writer(data)
 if __name__ == "__main__":
     path = "./data"
-    dir = 's0'  #保存训练人脸图的目录，为空表示新建
+    dir = 's41'  #保存训练人脸图的目录，为空表示新建
     docsv = doCsv("trainFace.csv")
     detect(path,dir)
     imagestoCsv(path)

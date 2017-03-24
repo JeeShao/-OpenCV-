@@ -6,6 +6,7 @@ import numpy as np
 import cv2
 import sys
 import os
+import traceback
 from doCsv import doCsv
 
 # 加载数据并识别人脸
@@ -16,10 +17,14 @@ def readImages(sz=None):
     docsv = doCsv("trainFace.csv")
     img_list = docsv.csv_reader()
     if img_list:
-        for i in range(1,len(img_list),2):
-            filepath = img_list[i]
-            im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-            c = img_list[i+1]
+        for i in range(1,len(img_list)):
+            img_str = img_list[i].split(';')
+            filepath = img_str[0]
+            try:
+                im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+                c = img_str[1]
+            except:
+                traceback.print_exc()
             # 调整尺寸
             if (sz is not None):
                 im = cv2.resize(im, (92, 112))
@@ -40,6 +45,7 @@ def face_rec():
         [X,y] = readImages()
     except:
         print("read images error")
+        traceback.print_exc()
         exit(1)
     y = np.asarray(y,dtype=np.int32)
     if(len(sysargv) == 3):
@@ -73,7 +79,7 @@ def face_rec():
                 params = model.predict(hist_roi)
                 print("Lable: %s, Confidence: %.2f" % (params[0],params[1]))
                 p=list(params)
-                if p[0]==0:
+                if p[0]==43:
                     p[0]="SGX"
                 elif p[0]==41:
                     p[0]="SJ"
