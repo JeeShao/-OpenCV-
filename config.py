@@ -36,6 +36,8 @@ HAAR_SCALE_FACTOR  = 1.3
 HAAR_MIN_NEIGHBORS = 4
 HAAR_MIN_SIZE      = (30, 30)
 
+#training images numbers for every face
+FACE_NUM = 60
 # Filename to use when saving the most recently captured image for debugging.
 # DEBUG_IMAGE = 'capture.pgm'
 

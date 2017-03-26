@@ -49,7 +49,7 @@ def detect(path,dir=''):
             nose = nose_cascade.detectMultiScale(roi_color,config.HAAR_SCALE_FACTOR,10,0,config.HAAR_MIN_SIZE)
             draw_rects(roi_color,nose,(100,100,0))
         cv2.imshow("camera",frame)
-        if k & 0xff == ord("q") or count==101:#拍照60张或按下q键 则退出
+        if k & 0xff == ord("q") or count>config.FACE_NUM:#拍照FACE_NUM张或按下q键 则退出
             break
     camera.release()
     cv2.destroyAllWindows()

@@ -9,13 +9,17 @@ import os
 import traceback
 from doCsv import doCsv
 import config
+import time
 
 # 基于LBPHfaces算法测试人脸识别脚本
 def face_rec():
     model = cv2.face.createLBPHFaceRecognizer()
+    t0 = time.time()
     model.load(config.TRAINING_MODEL)
+    t1 = time.time()
+    print("加载训练模型耗时",t1-t0,'S')
     camera = cv2.VideoCapture(0)
-    face_cascade = cv2.CascadeClassifier(config.CLASSIFIER_FILE)
+    face_cascade = cv2.CascadeClassifier(config.FACE_CLASSIFIER_FILE)
     while(True):
         read,img = camera.read()
         img = cv2.flip(img,1) #镜像翻转
