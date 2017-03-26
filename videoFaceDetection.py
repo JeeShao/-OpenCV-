@@ -8,54 +8,17 @@ import sys
 import os
 import traceback
 from doCsv import doCsv
+import config
 
-# 加载数据并识别人脸
-
-
-def readImages(sz=None):
-    X, y = [], []
-    docsv = doCsv("trainFace.csv")
-    img_list = docsv.csv_reader()
-    if img_list:
-        for i in range(1,len(img_list)):
-            img_str = img_list[i].split(';')
-            filepath = img_str[0]
-            try:
-                im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-                c = img_str[1]
-            except:
-                traceback.print_exc()
-            # 调整尺寸
-            if (sz is not None):
-                im = cv2.resize(im, (92, 112))
-            X.append(np.asarray(im, dtype=np.uint8))
-            y.append(c)
-        return [X,y]
-    else:
-        return False
-
-# 基于Eigenfaces算法测试人脸识别脚本
+# 基于LBPHfaces算法测试人脸识别脚本
 def face_rec():
-    names = ["Jee",'Joe','Jack']
-    sysargv={0:'00',1:'./data',2:'./train'}
-    if len(sysargv)<2:
-        print("USAGE:facerec_demo.py </path/to/image> [</path/to/store/image/at>]")
-        sys.exit()
-    try:
-        [X,y] = readImages()
-    except:
-        print("read images error")
-        traceback.print_exc()
-        exit(1)
-    y = np.asarray(y,dtype=np.int32)
-    if(len(sysargv) == 3):
-        out_dir = sysargv[2]
     model = cv2.face.createLBPHFaceRecognizer()
-    model.train(np.asarray(X),np.asarray(y))
+    model.load(config.TRAINING_MODEL)
     camera = cv2.VideoCapture(0)
-    face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_alt.xml')
+    face_cascade = cv2.CascadeClassifier(config.CLASSIFIER_FILE)
     while(True):
         read,img = camera.read()
+        img = cv2.flip(img,1) #镜像翻转
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  #灰度化
         #分离彩色图三通道
         # b, g, r = cv2.split(frame)
@@ -74,7 +37,7 @@ def face_rec():
             # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
             roi = gray[x:x+w,y:y+h] #灰度人脸图
             try:
-                roi = cv2.resize(roi, (92, 112),interpolation=cv2.INTER_LINEAR)#格式化
+                roi = cv2.resize(roi, (config.FACE_WIDTH, config.FACE_HEIGHT),interpolation=cv2.INTER_LINEAR)#格式化
                 hist_roi = cv2.equalizeHist(roi)  # 均衡直方图
                 params = model.predict(hist_roi)
                 print("Lable: %s, Confidence: %.2f" % (params[0],params[1]))
@@ -98,7 +61,6 @@ def face_rec():
     camera.release()
     cv2.destroyAllWindows()
 
-flag = 1 #0:训练 1:识别
 if __name__ == "__main__":
     path = "./data"
-    face_rec() if flag else detect(path)
+    face_rec()
