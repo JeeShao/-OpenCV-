@@ -2,18 +2,18 @@
 # -- coding:utf-8 --
 #@Time  : 2017/3/22  
 #@Author: Jee
+from doCsv import doCsv
 import numpy as np
+import traceback
+import config
+import time
 import cv2
 import sys
 import os
-import traceback
-from doCsv import doCsv
-import config
-import time
 
 # 基于LBPHfaces算法测试人脸识别脚本
 def face_rec():
-    model = cv2.face.createLBPHFaceRecognizer()
+    model = cv2.face.createLBPHFaceRecognizer(radius=1,neighbors=8,grid_x=8,grid_y=8,threshold = 150)
     t0 = time.time()
     model.load(config.TRAINING_MODEL)
     t1 = time.time()
@@ -66,5 +66,5 @@ def face_rec():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    path = "./data"
+    path = config.TRAINING_DIR
     face_rec()
