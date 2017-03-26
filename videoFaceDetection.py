@@ -2,10 +2,10 @@
 # -- coding:utf-8 --
 #@Time  : 2017/3/22  
 #@Author: Jee
+from config import *
 from doCsv import doCsv
 import numpy as np
 import traceback
-import config
 import time
 import cv2
 import sys
@@ -15,11 +15,11 @@ import os
 def face_rec():
     model = cv2.face.createLBPHFaceRecognizer(radius=1,neighbors=8,grid_x=8,grid_y=8,threshold = 150)
     t0 = time.time()
-    model.load(config.TRAINING_MODEL)
+    model.load(TRAINING_MODEL)
     t1 = time.time()
     print("加载训练模型耗时",t1-t0,'S')
     camera = cv2.VideoCapture(0)
-    face_cascade = cv2.CascadeClassifier(config.FACE_CLASSIFIER_FILE)
+    face_cascade = cv2.CascadeClassifier(FACE_CLASSIFIER_FILE)
     while(True):
         read,img = camera.read()
         img = cv2.flip(img,1) #镜像翻转
@@ -41,7 +41,7 @@ def face_rec():
             # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
             roi = gray[x:x+w,y:y+h] #灰度人脸图
             try:
-                roi = cv2.resize(roi, (config.FACE_WIDTH, config.FACE_HEIGHT),interpolation=cv2.INTER_LINEAR)#格式化
+                roi = cv2.resize(roi, (FACE_WIDTH, FACE_HEIGHT),interpolation=cv2.INTER_LINEAR)#格式化
                 hist_roi = cv2.equalizeHist(roi)  # 均衡直方图
                 params = model.predict(hist_roi)
                 print("Lable: %s, Confidence: %.2f" % (params[0],params[1]))
@@ -66,5 +66,5 @@ def face_rec():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    path = config.TRAINING_DIR
+    path = TRAINING_DIR
     face_rec()
