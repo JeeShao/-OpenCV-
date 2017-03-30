@@ -29,13 +29,14 @@ def detect(path,dir=''):
         if ret:
             frame = cv2.flip(frame,1)  #镜像翻转
         gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)#灰度图像
+        gray = cv2.equalizeHist(gray)# 均衡直方图
         faces = face_cascade.detectMultiScale(gray,HAAR_SCALE_FACTOR,HAAR_MIN_NEIGHBORS,0,HAAR_MIN_SIZE)
         k = cv2.waitKey(1000 // 12)
         for (x, y, w, h) in faces:
             img = cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             f = cv2.resize(gray[y:y+h,x:x+w],(FACE_WIDTH, FACE_HEIGHT))#格式化大小
             if(k & 0xff == ord("m")):  #拍照保存
-                f = cv2.equalizeHist(f)  # 均衡直方图
+                # f = cv2.equalizeHist(f)  # 均衡直方图
                 cv2.imwrite(TRAINING_DIR+'/%s/%s.pgm'% (dir,str(count)),f)
                 print("拍照:%d"%(count))
                 count+=1
@@ -117,9 +118,8 @@ def saveModel():
         return False
 
 if __name__ == "__main__":
-    path = TRAINING_DIR
     dir = 's41'  #保存训练人脸图的目录，为空表示新建
     docsv = doCsv(TRAINING_CVS_FILE)
-    detect(path,dir)
-    imagestoCsv(path)
+    detect(TRAINING_DIR,dir)
+    imagestoCsv(TRAINING_DIR)
     saveModel()
