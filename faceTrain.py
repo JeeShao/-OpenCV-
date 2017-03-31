@@ -15,7 +15,7 @@ def detect(path,dir=''):
     mouth_cascade = cv2.CascadeClassifier(MOUTH_CLASSIFIER_FILE)
     nose_cascade = cv2.CascadeClassifier(NOSE_CLASSIFIER_FILE)
     camera = cv2.VideoCapture(0)
-    count=1
+    count=31
     if(dir==''):
         # 增加新人脸时新建目录
         dirnames=os.listdir(path)
@@ -29,14 +29,14 @@ def detect(path,dir=''):
         if ret:
             frame = cv2.flip(frame,1)  #镜像翻转
         gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)#灰度图像
-        gray = cv2.equalizeHist(gray)# 均衡直方图
+        # gray = cv2.equalizeHist(gray)# 均衡直方图
         faces = face_cascade.detectMultiScale(gray,HAAR_SCALE_FACTOR,HAAR_MIN_NEIGHBORS,0,HAAR_MIN_SIZE)
         k = cv2.waitKey(1000 // 12)
         for (x, y, w, h) in faces:
             img = cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             f = cv2.resize(gray[y:y+h,x:x+w],(FACE_WIDTH, FACE_HEIGHT))#格式化大小
             if(k & 0xff == ord("m")):  #拍照保存
-                # f = cv2.equalizeHist(f)  # 均衡直方图
+                f = cv2.equalizeHist(f)  # 均衡直方图
                 cv2.imwrite(TRAINING_DIR+'/%s/%s.pgm'% (dir,str(count)),f)
                 print("拍照:%d"%(count))
                 count+=1
@@ -105,9 +105,6 @@ def saveModel():
                 c = img_str[1]
             except:
                 traceback.print_exc()
-            # 调整尺寸
-            # if (sz is not None):
-            #     im = cv2.resize(im, (92, 112))
             X.append(np.asarray(im, dtype=np.uint8))
             y.append(c)
         y = np.asarray(y, dtype=np.int32)

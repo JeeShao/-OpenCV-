@@ -24,7 +24,7 @@ def face_rec():
         read,img = camera.read()
         img = cv2.flip(img,1) #镜像翻转
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  #灰度化
-        gray = cv2.equalizeHist(gray) #均衡直方图
+        # gray = cv2.equalizeHist(gray) #均衡直方图
         #分离彩色图三通道
         # b, g, r = cv2.split(frame)
         # # cv2.imshow("Blue", r)
@@ -43,8 +43,8 @@ def face_rec():
             roi = gray[x:x+w,y:y+h] #灰度人脸图
             try:
                 roi = cv2.resize(roi, (FACE_WIDTH, FACE_HEIGHT),interpolation=cv2.INTER_LINEAR)#格式化
-                # hist_roi = cv2.equalizeHist(roi)  # 均衡直方图
-                params = model.predict(roi)
+                hist_roi = cv2.equalizeHist(roi)  # 均衡直方图
+                params = model.predict(hist_roi)
                 print("Lable: %s, Confidence: %.2f" % (params[0],params[1]))
                 p=list(params)
                 if p[0]==43:
