@@ -2,12 +2,14 @@
 # -- coding:utf-8 --
 #@Time  : 2017/3/22  
 #@Author: Jee
-import numpy as np
-import cv2
-import os
 import sys
-from doCsv import doCsv
+
+import cv2
+import numpy as np
+
 from config import *
+from facerec.doCsv import doCsv
+
 
 def detect(path,dir=''):
     face_cascade = cv2.CascadeClassifier(FACE_CLASSIFIER_FILE)

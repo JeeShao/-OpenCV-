@@ -9,8 +9,7 @@ from time import strftime
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
-# from . import ui
+import ui
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -31,35 +30,18 @@ except AttributeError:
 
 class Ui_MainWindow(QMainWindow):
     model = None
-
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
-
         self.setupUi(self)
         # self.setStyleSheet(style)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(480, 800)
+        MainWindow.resize(400, 400)
 
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
-
-        self.label_date = QtGui.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setPointSize(28)
-        self.label_date.setFont(font)
-        self.verticalLayout.addWidget(self.label_date)
-
-        self.lcd_time = QtGui.QLCDNumber(self.centralwidget)
-        font = QtGui.QFont()
-        font.setPointSize(24)
-        self.lcd_time.setFont(font)
-        self.lcd_time.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-        self.lcd_time.setDigitCount(8)
-        self.lcd_time.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.verticalLayout.addWidget(self.lcd_time)
 
         self.label_welcome = QtGui.QLabel(self.centralwidget)
         font = QtGui.QFont()
@@ -118,23 +100,6 @@ class Ui_MainWindow(QMainWindow):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self._timer = QtCore.QTimer(self)
-        self._timer.timeout.connect(self.updateTime)
-        self._timer.start(1000)
-        self.update()
-
-    def updateTime(self):
-        # date = datetime.datetime.now().strftime('    %Y-%m-%d')
-        dateNow = datetime.datetime.now()
-        dy = dateNow.strftime('     %Y')
-        dm = dateNow.strftime('%m')
-        dd = dateNow.strftime('%d')
-        time = dateNow.strftime('%H:%M:%S')
-
-        self.label_date.setText(dy + '年' + dm + '月' + dd + '日')
-        # self.lcd_time.setText(time)
-        self.lcd_time.display(strftime("%H" + ":" + "%M" + ":" + "%S"))
-
     def setModel(self, model):
         self.model = model
 
@@ -162,7 +127,7 @@ class Ui_MainWindow(QMainWindow):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
-        self.label_date.setText(_translate("MainWindow", "    0000年00月00日", None))
+        # self.label_date.setText(_translate("MainWindow", "    0000年00月00日", None))
         self.label_welcome.setText(str("人脸识别系统"))
         self.btn_face.setText("人脸识别")
         self.btn_register.setText("人脸录入")
@@ -174,6 +139,8 @@ if __name__ == "__main__":
     # mainWindow.setModel(model)
     # mainWindow.showFullScreen()
     # mainWindow.setVideo(video)
+    mainWindow.show()
     mainWindow.raise_()
 
     QtApp.exec_()
+

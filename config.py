@@ -27,7 +27,7 @@ FACE_WIDTH  = 92
 FACE_HEIGHT = 112
 
 # base dir
-BASE_DIR = os.path.abspath('./')
+BASE_DIR = os.path.abspath('../')
 
 # Face detection cascade classifier configuration.
 # You don't need to modify this unless you know what you're doing.

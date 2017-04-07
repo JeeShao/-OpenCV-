@@ -3,7 +3,7 @@
 #2017.03.11
 #Jee
 import cv2
-filename = '2.jpg'
+filename = '1.jpg'
 
 def detect(filename):
     face_cascade = cv2.CascadeClassifier('./cascades/haarcascade_frontalface_default.xml')

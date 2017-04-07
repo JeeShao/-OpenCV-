@@ -2,14 +2,12 @@
 # -- coding:utf-8 --
 #@Time  : 2017/3/22  
 #@Author: Jee
-from config import *
-from doCsv import doCsv
-import numpy as np
-import traceback
 import time
+
 import cv2
-import sys
-import os
+
+from config import *
+
 
 # 基于LBPHfaces算法测试人脸识别脚本
 def face_rec():
