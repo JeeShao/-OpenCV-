@@ -17,7 +17,7 @@ def detect(path,dir=''):
     mouth_cascade = cv2.CascadeClassifier(MOUTH_CLASSIFIER_FILE)
     nose_cascade = cv2.CascadeClassifier(NOSE_CLASSIFIER_FILE)
     camera = cv2.VideoCapture(0)
-    count=31
+    count=1
     if(dir==''):
         # 增加新人脸时新建目录
         dirnames=os.listdir(path)
@@ -67,6 +67,7 @@ def imagestoCsv(path,sz=None):
     label=1
     sort_flag=0
     for dirname,dirnames,filenames in os.walk(path):
+
         if sort_flag==0:
             dirnames.sort(key=lambda x: int(x.split('s')[1]))
             sort_flag=1      #标志排过序 以免重复排序

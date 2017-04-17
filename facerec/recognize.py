@@ -47,10 +47,6 @@ def face_rec():
                 p=list(params)
                 if p[0]==43:
                     p[0]="SGX"
-                elif p[0]==41:
-                    p[0]="SJ"
-                elif p[0]==42:
-                    p[0]="LC"
                 else:
                     pass
                 cv2.putText(img,str(p[0]),(x,y-20),cv2.FONT_HERSHEY_SIMPLEX,1,255,2)

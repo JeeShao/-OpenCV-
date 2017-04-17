@@ -9,7 +9,7 @@ from time import strftime
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import ui
+from ui import ui
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -117,17 +117,12 @@ class Ui_MainWindow(QMainWindow):
         self.setCentralWidget(self.facerec)
 
     def btn_register_clicked(self):
-        print('face register')
-        self._timer.stop()
-
         self.register = ui.FaceRegister(self)
-        self.register.setModel(self.model)
         self.register.setVideo(self.video)
         self.setCentralWidget(self.register)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
-        # self.label_date.setText(_translate("MainWindow", "    0000年00月00日", None))
         self.label_welcome.setText(str("人脸识别系统"))
         self.btn_face.setText("人脸识别")
         self.btn_register.setText("人脸录入")
